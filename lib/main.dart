@@ -3,6 +3,7 @@ import 'package:mobile_blog/blog.dart';
 import 'package:mobile_blog/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:get/get.dart';
 
 void main() async {
   // make sure that everything before runApp() completes
@@ -27,7 +28,7 @@ void main() async {
     print('no token');
   }
 
-  runApp(MaterialApp(
+  runApp(GetMaterialApp(
     // home: Login(),
     initialRoute: home,
     routes: {
