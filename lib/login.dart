@@ -3,8 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatelessWidget {
-  TextEditingController tcUsername = TextEditingController();
-  TextEditingController tcPassword = TextEditingController();
+  final TextEditingController tcUsername = TextEditingController();
+  final TextEditingController tcPassword = TextEditingController();
   final String _url = 'http://10.0.2.2:3000/mobile/login';
 
   //------------- Login -----------------
