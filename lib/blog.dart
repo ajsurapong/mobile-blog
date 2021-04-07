@@ -90,7 +90,12 @@ class _BlogState extends State<Blog> {
       itemCount: blog != null ? blog['post'].length : 0,
       itemBuilder: (BuildContext context, int index) {
         return ListTile(
-          leading: Icon(Icons.edit),
+          leading: IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              Get.toNamed('/edit', arguments: blog['post'][index]);
+            },
+          ),
           title: Text(blog['post'][index]['title']),
           subtitle: Text(blog['post'][index]['detail']),
           trailing: IconButton(

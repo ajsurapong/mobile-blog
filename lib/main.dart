@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_blog/add.dart';
 import 'package:mobile_blog/blog.dart';
+import 'package:mobile_blog/edit.dart';
 import 'package:mobile_blog/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -36,6 +37,7 @@ void main() async {
       '/login': (context) => Login(),
       '/blog': (context) => Blog(),      
       '/add': (context) => Add(),      
+      '/edit': (context) => Edit(),      
     },
   ));
 }
