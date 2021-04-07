@@ -12,8 +12,9 @@ class Blog extends StatefulWidget {
 }
 
 class _BlogState extends State<Blog> {
-  final String _url = 'http://10.0.2.2:3000/mobile/blog';
+  String _url = 'http://10.0.2.2:3000/mobile/blog';
   var _token;
+  int _year = 0;
 
   // var _data = {
   //   'post': [
@@ -86,23 +87,64 @@ class _BlogState extends State<Blog> {
 
   //------------- Create ListView -----------------
   Widget createListView(blog) {
-    return ListView.builder(
-      itemCount: blog != null ? blog['post'].length : 0,
-      itemBuilder: (BuildContext context, int index) {
-        return ListTile(
-          leading: IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () {
-              Get.toNamed('/edit', arguments: blog['post'][index]);
+    // print(blog['year']);
+    // create dynamic dropdown for selecting years
+    List<DropdownMenuItem<int>> listItem = [];
+    blog['year'].forEach((y) {
+      listItem.add(DropdownMenuItem(value: y['year'], child: Text('${y['year']}'),));
+    });
+    // add all years option
+    listItem.insert(0, DropdownMenuItem(value: 0, child: Text('All years')));
+
+    return Column(
+      children: [
+        DropdownButton(
+          value: _year,
+          items: listItem,
+          // items: [
+          //   DropdownMenuItem(
+          //     value: 2021,
+          //     child: Text('2021'),
+          //   ),
+          //   DropdownMenuItem(
+          //     value: 2020,
+          //     child: Text('2020'),
+          //   ),
+          // ],
+          onChanged: (int newYear) {
+            setState(() {
+              _year = newYear;
+              if(newYear == 0) {
+                // all years
+                _url = 'http://10.0.2.2:3000/mobile/blog';
+              }
+              else {
+                _url = 'http://10.0.2.2:3000/mobile/blog/$newYear';
+              }
+            });
+          },
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: blog != null ? blog['post'].length : 0,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                leading: IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () {
+                    Get.toNamed('/edit', arguments: blog['post'][index]);
+                  },
+                ),
+                title: Text(blog['post'][index]['title']),
+                subtitle: Text(blog['post'][index]['detail']),
+                trailing: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () => deletePost(blog['post'][index]['blogID'])),
+              );
             },
           ),
-          title: Text(blog['post'][index]['title']),
-          subtitle: Text(blog['post'][index]['detail']),
-          trailing: IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: () => deletePost(blog['post'][index]['blogID'])),
-        );
-      },
+        ),
+      ],
     );
   }
 
