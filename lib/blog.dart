@@ -124,7 +124,9 @@ class _BlogState extends State<Blog> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () {},
+        onPressed: () {
+          Get.toNamed('/add');
+        },
       ),
     );
   }

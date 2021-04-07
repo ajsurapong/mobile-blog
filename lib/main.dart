@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_blog/add.dart';
 import 'package:mobile_blog/blog.dart';
 import 'package:mobile_blog/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,7 +34,8 @@ void main() async {
     initialRoute: home,
     routes: {
       '/login': (context) => Login(),
-      '/blog': (context) => Blog(),
+      '/blog': (context) => Blog(),      
+      '/add': (context) => Add(),      
     },
   ));
 }
