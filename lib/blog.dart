@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Blog extends StatefulWidget {
   @override
@@ -14,7 +15,7 @@ class Blog extends StatefulWidget {
 class _BlogState extends State<Blog> {
   String _url = 'http://10.0.2.2:3000/mobile/blog';
   var _token;
-  int _year = 0;
+  var _year;
 
   // var _data = {
   //   'post': [
@@ -27,8 +28,10 @@ class _BlogState extends State<Blog> {
   //------------- Logout -----------------
   void logout() async {
     // clear the saved token
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove('token');
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // prefs.remove('token');
+    FlutterSecureStorage storage = FlutterSecureStorage();
+    await storage.delete(key: 'token');
 
     // return to login page
     Navigator.pushReplacementNamed(context, '/login');
@@ -37,8 +40,11 @@ class _BlogState extends State<Blog> {
   //------------- Get blog data -----------------
   Future<dynamic> getBlog() async {
     // get token
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    _token = prefs.getString('token');
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // _token = prefs.getString('token');
+    FlutterSecureStorage storage = FlutterSecureStorage();
+    _token = await storage.read(key: 'token');
+
     if (_token != null) {
       // connect to server
       http.Response response = await http
@@ -89,40 +95,68 @@ class _BlogState extends State<Blog> {
   Widget createListView(blog) {
     // print(blog['year']);
     // create dynamic dropdown for selecting years
-    List<DropdownMenuItem<int>> listItem = [];
-    blog['year'].forEach((y) {
-      listItem.add(DropdownMenuItem(value: y['year'], child: Text('${y['year']}'),));
-    });
-    // add all years option
-    listItem.insert(0, DropdownMenuItem(value: 0, child: Text('All years')));
+    // List<DropdownMenuItem<int>> listItem = [];
+    // blog['year'].forEach((y) {
+    //   listItem.add(DropdownMenuItem(
+    //     value: y['year'],
+    //     child: Text('${y['year']}'),
+    //   ));
+    // });
+    // // add all years option
+    // listItem.insert(0, DropdownMenuItem(value: 0, child: Text('All years')));
 
     return Column(
       children: [
-        DropdownButton(
-          value: _year,
-          items: listItem,
-          // items: [
-          //   DropdownMenuItem(
-          //     value: 2021,
-          //     child: Text('2021'),
-          //   ),
-          //   DropdownMenuItem(
-          //     value: 2020,
-          //     child: Text('2020'),
-          //   ),
-          // ],
-          onChanged: (int newYear) {
-            setState(() {
-              _year = newYear;
-              if(newYear == 0) {
-                // all years
-                _url = 'http://10.0.2.2:3000/mobile/blog';
-              }
-              else {
-                _url = 'http://10.0.2.2:3000/mobile/blog/$newYear';
-              }
-            });
-          },
+        // DropdownButton(
+        //   value: _year,
+        //   items: listItem,
+        //   // items: [
+        //   //   DropdownMenuItem(
+        //   //     value: 2021,
+        //   //     child: Text('2021'),
+        //   //   ),
+        //   //   DropdownMenuItem(
+        //   //     value: 2020,
+        //   //     child: Text('2020'),
+        //   //   ),
+        //   // ],
+        //   onChanged: (int newYear) {
+        //     setState(() {
+        //       _year = newYear;
+        //       if(newYear == 0) {
+        //         // all years
+        //         _url = 'http://10.0.2.2:3000/mobile/blog';
+        //       }
+        //       else {
+        //         _url = 'http://10.0.2.2:3000/mobile/blog/$newYear';
+        //       }
+        //     });
+        //   },
+        // ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Year'),
+            IconButton(
+              icon: Icon(Icons.calendar_today),
+              onPressed: () async {
+                // _year = await Navigator.pushNamed(context, '/year', arguments: blog['year']);
+                _year = await Get.toNamed('/year', arguments: blog['year']);
+                setState(() {
+                  _url = 'http://10.0.2.2:3000/mobile/blog/$_year';
+                });
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.refresh_sharp),
+              color: Colors.red,
+              onPressed: () {
+                setState(() {
+                  _url = 'http://10.0.2.2:3000/mobile/blog';
+                });
+              },
+            )
+          ],
         ),
         Expanded(
           child: ListView.builder(

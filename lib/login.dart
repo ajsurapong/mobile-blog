@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Login extends StatelessWidget {
   final TextEditingController tcUsername = TextEditingController();
@@ -17,11 +19,15 @@ class Login extends StatelessWidget {
     if (response.statusCode == 200) {
       String token = response.body.toString();
       // save token to local storage
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('token', token);
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      // prefs.setString('token', token);
+      FlutterSecureStorage storage = FlutterSecureStorage();
+      await storage.write(key: 'token', value: token);
       // forward to blog page
-      Navigator.pushReplacementNamed(context, '/blog');
+      // Navigator.pushReplacementNamed(context, '/blog');
+      Get.offNamed('/blog');
     } else {
+      Get.defaultDialog(title: 'Error', middleText: response.body.toString());
       print(response.body.toString());
     }
   }
